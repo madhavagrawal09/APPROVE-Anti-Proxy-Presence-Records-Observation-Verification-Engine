@@ -22,6 +22,14 @@ jobs:
           cache: pip
           cache-dependency-path: backend/requirements.txt
       - run: pip install -r requirements.txt
+      - run: alembic upgrade head
+        env:
+          JWT_SECRET_KEY: ci-only-not-a-production-secret
+          DATABASE_URL: sqlite:///./ci-test.db
+      - run: python scripts/seed_roles.py
+        env:
+          JWT_SECRET_KEY: ci-only-not-a-production-secret
+          DATABASE_URL: sqlite:///./ci-test.db
       - run: pytest
         env:
           JWT_SECRET_KEY: ci-only-not-a-production-secret
